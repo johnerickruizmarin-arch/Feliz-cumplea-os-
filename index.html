@@ -2,8 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Feliz cumpleaños, Lulu 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+
+<title>Feliz cumpleaños, Lulu 🌌</title>
 
 <style>
 *{
@@ -12,12 +13,13 @@
   box-sizing:border-box;
 }
 
-body{
+html,body{
+  width:100%;
+  height:100%;
   overflow:hidden;
-  background:#02010a;
-  color:white;
+  background:#000008;
   font-family:Arial,sans-serif;
-  height:100vh;
+  touch-action:none;
 }
 
 canvas{
@@ -27,66 +29,76 @@ canvas{
   height:100%;
 }
 
-.contenido{
-  position:relative;
-  z-index:2;
-  height:100vh;
+.mensaje{
+  position:fixed;
+  z-index:10;
+  inset:0;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   text-align:center;
-  padding:25px;
+  pointer-events:none;
+  padding:20px;
 }
 
 h1{
-  font-size:clamp(38px,10vw,75px);
-  margin-bottom:18px;
-  color:#fff;
+  font-size:clamp(38px,10vw,80px);
+  color:white;
   text-shadow:
-    0 0 10px #fff,
-    0 0 25px #ff6bd6,
-    0 0 50px #9b5cff;
-  animation:latido 2s infinite;
+    0 0 10px white,
+    0 0 25px #ff6de7,
+    0 0 50px #9d4dff,
+    0 0 90px #6b4dff;
+  animation:pulse 2.5s infinite ease-in-out;
 }
 
 p{
-  font-size:clamp(18px,5vw,28px);
+  margin-top:18px;
   max-width:650px;
+  font-size:clamp(17px,4.5vw,27px);
   line-height:1.5;
-  text-shadow:0 0 12px #ff8ee8;
+  color:#fff;
+  text-shadow:
+    0 0 8px #ff75df,
+    0 0 20px #9d55ff;
 }
 
 .corazon{
+  margin-top:20px;
   font-size:55px;
-  margin-top:25px;
-  animation:flotar 2s ease-in-out infinite;
+  animation:float 2s infinite ease-in-out;
 }
 
-@keyframes latido{
+.ayuda{
+  position:fixed;
+  z-index:11;
+  bottom:15px;
+  width:100%;
+  text-align:center;
+  color:white;
+  opacity:.5;
+  font-size:12px;
+  pointer-events:none;
+}
+
+@keyframes pulse{
   0%,100%{transform:scale(1);}
   50%{transform:scale(1.06);}
 }
 
-@keyframes flotar{
+@keyframes float{
   0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-15px);}
-}
-
-.nota{
-  position:absolute;
-  bottom:20px;
-  font-size:12px;
-  opacity:.55;
+  50%{transform:translateY(-12px);}
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="galaxia"></canvas>
+<canvas id="canvas"></canvas>
 
-<div class="contenido">
+<div class="mensaje">
   <h1>Feliz cumpleaños, Lulu 💖</h1>
 
   <p>
@@ -96,132 +108,448 @@ p{
   </p>
 
   <div class="corazon">💗</div>
+</div>
 
-  <div class="nota">Una pequeña galaxia hecha especialmente para ti 🌌</div>
+<div class="ayuda">
+  🤏 Junta o separa dos dedos para hacer zoom · Arrastra para explorar 🌌
 </div>
 
 <script>
-const canvas = document.getElementById("galaxia");
+
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let estrellas = [];
-let particulas = [];
+let W,H;
 
-function ajustar(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function resize(){
+  W=canvas.width=innerWidth*devicePixelRatio;
+  H=canvas.height=innerHeight*devicePixelRatio;
+
+  canvas.style.width=innerWidth+"px";
+  canvas.style.height=innerHeight+"px";
+
+  ctx.setTransform(
+    devicePixelRatio,0,0,
+    devicePixelRatio,0,0
+  );
+
+  W=innerWidth;
+  H=innerHeight;
 }
 
-window.addEventListener("resize", ajustar);
-ajustar();
+resize();
+window.addEventListener("resize",resize);
 
-function crearEstrellas(){
-  estrellas = [];
 
-  for(let i=0;i<250;i++){
-    estrellas.push({
-      x:Math.random()*canvas.width,
-      y:Math.random()*canvas.height,
-      r:Math.random()*2+0.2,
-      brillo:Math.random(),
-      velocidad:Math.random()*0.02+0.005
-    });
-  }
-}
+/* =========================
+   ESTRELLAS DEL ESPACIO
+========================= */
 
-function crearParticulas(){
-  particulas=[];
+const stars=[];
 
-  for(let i=0;i<500;i++){
-    const angulo=Math.random()*Math.PI*2;
-    const radio=Math.random()*Math.min(canvas.width,canvas.height)*0.45;
+for(let i=0;i<450;i++){
 
-    particulas.push({
-      angulo:angulo,
-      radio:radio,
-      velocidad:(Math.random()*0.0008)+0.0002,
-      tamaño:Math.random()*2+0.3
-    });
-  }
-}
-
-crearEstrellas();
-crearParticulas();
-
-function animar(){
-  ctx.fillStyle="#02010a";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // Estrellas
-  estrellas.forEach(e=>{
-    e.brillo += e.velocidad;
-
-    const alpha=
-      0.35+
-      Math.abs(Math.sin(e.brillo))*0.65;
-
-    ctx.beginPath();
-    ctx.arc(e.x,e.y,e.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(255,255,255,${alpha})`;
-    ctx.fill();
+  stars.push({
+    x:Math.random(),
+    y:Math.random(),
+    size:Math.random()*2+0.3,
+    alpha:Math.random(),
+    speed:Math.random()*0.03+0.005
   });
 
-  // Galaxia
-  const cx=canvas.width/2;
-  const cy=canvas.height/2;
+}
 
-  particulas.forEach(p=>{
-    p.angulo += p.velocidad;
+
+/* =========================
+   GALAXIA
+========================= */
+
+const particles=[];
+
+for(let i=0;i<1800;i++){
+
+  const radius=Math.pow(Math.random(),0.65)*520;
+
+  const angle=
+    Math.random()*Math.PI*2;
+
+  particles.push({
+
+    radius:radius,
+
+    angle:angle,
+
+    speed:
+      (0.0005+
+      Math.random()*0.0015)
+      *(radius<150?1.5:1),
+
+    size:
+      Math.random()*1.8+0.3,
+
+    brightness:
+      Math.random(),
+
+    arm:
+      Math.floor(Math.random()*5)
+
+  });
+
+}
+
+
+/* =========================
+   CONTROLES
+========================= */
+
+let rotation=0;
+
+let zoom=1;
+
+let offsetX=0;
+let offsetY=0;
+
+let dragging=false;
+
+let lastX=0;
+let lastY=0;
+
+let pinchDistance=0;
+
+
+/* =========================
+   TOUCH
+========================= */
+
+canvas.addEventListener(
+"touchstart",
+e=>{
+
+  if(e.touches.length===1){
+
+    dragging=true;
+
+    lastX=e.touches[0].clientX;
+    lastY=e.touches[0].clientY;
+
+  }
+
+  if(e.touches.length===2){
+
+    dragging=false;
+
+    pinchDistance=
+      distance(
+        e.touches[0],
+        e.touches[1]
+      );
+
+  }
+
+},
+{passive:false}
+);
+
+
+canvas.addEventListener(
+"touchmove",
+e=>{
+
+  e.preventDefault();
+
+  if(e.touches.length===1 && dragging){
+
+    const x=e.touches[0].clientX;
+    const y=e.touches[0].clientY;
+
+    offsetX += x-lastX;
+    offsetY += y-lastY;
+
+    lastX=x;
+    lastY=y;
+
+  }
+
+
+  if(e.touches.length===2){
+
+    const newDistance=
+      distance(
+        e.touches[0],
+        e.touches[1]
+      );
+
+    const difference=
+      newDistance-pinchDistance;
+
+    zoom += difference*0.005;
+
+    zoom=Math.max(
+      0.45,
+      Math.min(3.5,zoom)
+    );
+
+    pinchDistance=newDistance;
+
+  }
+
+},
+{passive:false}
+);
+
+
+canvas.addEventListener(
+"touchend",
+()=>{
+  dragging=false;
+}
+);
+
+
+function distance(a,b){
+
+  const dx=a.clientX-b.clientX;
+  const dy=a.clientY-b.clientY;
+
+  return Math.sqrt(dx*dx+dy*dy);
+
+}
+
+
+/* =========================
+   MOUSE
+========================= */
+
+canvas.addEventListener(
+"mousedown",
+e=>{
+
+  dragging=true;
+
+  lastX=e.clientX;
+  lastY=e.clientY;
+
+});
+
+window.addEventListener(
+"mouseup",
+()=>{
+  dragging=false;
+});
+
+window.addEventListener(
+"mousemove",
+e=>{
+
+  if(!dragging)return;
+
+  offsetX+=e.clientX-lastX;
+  offsetY+=e.clientY-lastY;
+
+  lastX=e.clientX;
+  lastY=e.clientY;
+
+});
+
+
+canvas.addEventListener(
+"wheel",
+e=>{
+
+  e.preventDefault();
+
+  zoom-=e.deltaY*0.001;
+
+  zoom=Math.max(
+    0.45,
+    Math.min(3.5,zoom)
+  );
+
+},
+{passive:false}
+);
+
+
+/* =========================
+   ANIMACIÓN
+========================= */
+
+function draw(){
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+  ctx.fillStyle="#000008";
+
+  ctx.fillRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+  /* estrellas */
+
+  stars.forEach(s=>{
+
+    s.alpha += s.speed;
+
+    const a=
+      0.2+
+      Math.abs(Math.sin(s.alpha))*0.8;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      s.x*W,
+      s.y*H,
+      s.size,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fillStyle=
+      `rgba(255,255,255,${a})`;
+
+    ctx.fill();
+
+  });
+
+
+  /* centro de galaxia */
+
+  const cx=
+    W/2+
+    offsetX;
+
+  const cy=
+    H/2+
+    offsetY;
+
+
+  /* giro automático */
+
+  rotation+=0.0018;
+
+
+  /* galaxia */
+
+  particles.forEach(p=>{
+
+    p.angle += p.speed;
+
+
+    const armOffset=
+      p.arm*
+      (Math.PI*2/5);
+
+
+    const angle=
+      p.angle+
+      rotation+
+      armOffset+
+      p.radius*0.002;
+
+
+    const radius=
+      p.radius*zoom;
+
 
     const x=
       cx+
-      Math.cos(p.angulo)*p.radio;
+      Math.cos(angle)*
+      radius;
+
 
     const y=
       cy+
-      Math.sin(p.angulo)*p.radio*0.45;
+      Math.sin(angle)*
+      radius*
+      0.43;
 
-    const brillo=
+
+    const alpha=
       Math.max(
-        0.05,
-        1-p.radio/(Math.min(canvas.width,canvas.height)*0.45)
+        0,
+        1-
+        radius/(600*zoom)
       );
 
+
     ctx.beginPath();
-    ctx.arc(x,y,p.tamaño,0,Math.PI*2);
+
+    ctx.arc(
+      x,
+      y,
+      p.size*zoom,
+      0,
+      Math.PI*2
+    );
+
 
     ctx.fillStyle=
-      `rgba(220,150,255,${brillo})`;
+      `rgba(210,150,255,${alpha})`;
 
     ctx.fill();
+
   });
 
-  // Núcleo brillante
-  const gradiente=ctx.createRadialGradient(
-    cx,cy,0,
-    cx,cy,Math.min(canvas.width,canvas.height)*0.35
+
+  /* núcleo brillante */
+
+  const glow=
+    ctx.createRadialGradient(
+      cx,
+      cy,
+      0,
+      cx,
+      cy,
+      250*zoom
+    );
+
+  glow.addColorStop(
+    0,
+    "rgba(255,180,255,.35)"
   );
 
-  gradiente.addColorStop(0,"rgba(255,120,230,0.20)");
-  gradiente.addColorStop(0.35,"rgba(150,80,255,0.08)");
-  gradiente.addColorStop(1,"rgba(0,0,0,0)");
+  glow.addColorStop(
+    .25,
+    "rgba(190,100,255,.18)"
+  );
 
-  ctx.fillStyle=gradiente;
+  glow.addColorStop(
+    1,
+    "rgba(0,0,0,0)"
+  );
+
+
+  ctx.fillStyle=glow;
+
   ctx.beginPath();
+
   ctx.arc(
     cx,
     cy,
-    Math.min(canvas.width,canvas.height)*0.35,
+    250*zoom,
     0,
     Math.PI*2
   );
+
   ctx.fill();
 
-  requestAnimationFrame(animar);
+
+  requestAnimationFrame(draw);
+
 }
 
-animar();
+draw();
+
 </script>
 
 </body>
-    </html>
+</html>
