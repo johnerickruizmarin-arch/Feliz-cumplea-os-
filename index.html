@@ -1,48 +1,377 @@
-import cv2
-import mediapipe as mp
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feliz cumpleaños, Elida Joane</title>
 
-# Inicializar Mediapipe
-mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-hands = mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.7)
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#02030c;
+    font-family:Arial,Helvetica,sans-serif;
+}
 
-# Inicializar cámara
-cap = cv2.VideoCapture(0)
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-# Posición inicial de la figura
-circle_x, circle_y = 300, 300
+/* Fondo */
+#space{
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(circle at center,#111744 0%,#05071b 35%,#02030c 75%,#000 100%);
+}
 
-while cap.isOpened():
-    success, image = cap.read()
-    if not success:
-        break
+/* Galaxia */
+.galaxy{
+    position:absolute;
+    width:95vmin;
+    height:95vmin;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    animation:rotateGalaxy 35s linear infinite;
+}
 
-    # Convertir a RGB
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    results = hands.process(image_rgb)
+@keyframes rotateGalaxy{
+    from{transform:translate(-50%,-50%) rotate(0deg);}
+    to{transform:translate(-50%,-50%) rotate(360deg);}
+}
 
-    # Dibujar resultados
-    if results.multi_hand_landmarks:
-        for hand_landmarks in results.multi_hand_landmarks:
-            mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+/* Brazos de la galaxia */
+.arm{
+    position:absolute;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:
+      radial-gradient(ellipse at center,
+        rgba(255,255,255,.9) 0%,
+        rgba(150,170,255,.45) 3%,
+        rgba(80,100,255,.18) 10%,
+        transparent 42%);
+    filter:blur(1px);
+}
 
-            # Obtener coordenadas del dedo índice (landmark 8)
-            h, w, _ = image.shape
-            index_x = int(hand_landmarks.landmark[8].x * w)
-            index_y = int(hand_landmarks.landmark[8].y * h)
+.arm:nth-child(1){
+    transform:rotate(0deg) scale(.95,.32);
+}
 
-            # Mover el círculo a la posición del dedo índice
-            circle_x, circle_y = index_x, index_y
+.arm:nth-child(2){
+    transform:rotate(65deg) scale(.95,.32);
+}
 
-    # Dibujar círculo
-    cv2.circle(image, (circle_x, circle_y), 40, (0, 255, 0), -1)
+.arm:nth-child(3){
+    transform:rotate(130deg) scale(.95,.32);
+}
 
-    # Mostrar imagen
-    cv2.imshow("Control con manos", image)
+/* Centro */
+.core{
+    position:absolute;
+    width:18vmin;
+    height:18vmin;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:
+      radial-gradient(circle,
+      white 0%,
+      #dce5ff 8%,
+      #9aaeff 20%,
+      rgba(105,125,255,.45) 40%,
+      transparent 72%);
+    box-shadow:
+      0 0 25px #fff,
+      0 0 55px #879cff,
+      0 0 100px #4055ff;
+}
 
-    if cv2.waitKey(1) & 0xFF == 27:  # Presiona ESC para salir
-        break
+/* Estrellas */
+.star{
+    position:absolute;
+    width:5px;
+    height:5px;
+    background:white;
+    border-radius:50%;
+    box-shadow:
+      0 0 5px white,
+      0 0 12px #aebcff,
+      0 0 20px #738cff;
+    animation:twinkle 2s ease-in-out infinite alternate;
+    cursor:pointer;
+    z-index:10;
+}
 
-cap.release()
-cv2.destroyAllWindows()
+.star:before,
+.star:after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    background:white;
+    box-shadow:0 0 8px white;
+}
+
+.star:before{
+    width:1px;
+    height:18px;
+}
+
+.star:after{
+    width:18px;
+    height:1px;
+}
+
+@keyframes twinkle{
+    from{
+        opacity:.35;
+        transform:scale(.65);
+    }
+    to{
+        opacity:1;
+        transform:scale(1.35);
+    }
+}
+
+/* Título */
+.title{
+    position:absolute;
+    z-index:30;
+    text-align:center;
+    width:90%;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    color:white;
+    text-shadow:
+      0 0 10px #fff,
+      0 0 25px #8ca0ff,
+      0 0 50px #566cff;
+    pointer-events:none;
+}
+
+.title h1{
+    font-size:clamp(27px,7vw,65px);
+    line-height:1.1;
+    font-weight:800;
+}
+
+.title p{
+    margin-top:12px;
+    font-size:clamp(14px,3vw,23px);
+    letter-spacing:3px;
+    opacity:.9;
+}
+
+/* Partículas */
+.particle{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:white;
+    border-radius:50%;
+    box-shadow:0 0 7px white;
+    animation:moveParticle linear infinite;
+}
+
+@keyframes moveParticle{
+    from{
+        transform:translate(0,0);
+        opacity:0;
+    }
+    20%{opacity:1;}
+    80%{opacity:1;}
+    to{
+        transform:translate(var(--x),var(--y));
+        opacity:0;
+    }
+}
+
+/* Mensaje */
+.message{
+    position:fixed;
+    z-index:100;
+    left:50%;
+    bottom:8%;
+    transform:translateX(-50%) scale(.8);
+    width:min(85%,420px);
+    padding:18px 22px;
+    text-align:center;
+    color:white;
+    background:rgba(8,10,35,.85);
+    border:1px solid rgba(180,195,255,.5);
+    border-radius:20px;
+    box-shadow:
+      0 0 25px rgba(100,120,255,.6),
+      inset 0 0 20px rgba(100,120,255,.12);
+    backdrop-filter:blur(10px);
+    opacity:0;
+    pointer-events:none;
+    transition:.35s;
+}
+
+.message.show{
+    opacity:1;
+    transform:translateX(-50%) scale(1);
+}
+
+.message span{
+    font-size:18px;
+    line-height:1.4;
+}
+
+/* Instrucción */
+.hint{
+    position:fixed;
+    z-index:40;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    color:rgba(255,255,255,.65);
+    font-size:13px;
+    text-align:center;
+    letter-spacing:1px;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<div id="space">
+
+    <div class="galaxy">
+        <div class="arm"></div>
+        <div class="arm"></div>
+        <div class="arm"></div>
+        <div class="core"></div>
+    </div>
+
+    <div class="title">
+        <h1>Feliz cumpleaños</h1>
+        <h1>Elida Joane</h1>
+        <p>(Dormilona 😴✨)</p>
+    </div>
+
+</div>
+
+<div class="message" id="message">
+    <span id="messageText"></span>
+</div>
+
+<div class="hint">
+    ✨ Toca las estrellas ✨
+</div>
+
+<script>
+
+/* =========================
+   ESTRELLAS
+========================= */
+
+const space = document.getElementById("space");
+
+const mensajes = [
+    "⭐ Mi hermana, mi compañera de aventuras.",
+    "😂 Aunque seas una dormilona, eres única.",
+    "✨ Gracias por todas las risas.",
+    "😎 Siempre haciendo de las tuyas.",
+    "❤️ Que nunca te falten motivos para sonreír.",
+    "🌟 Las mejores historias siempre quedan en familia.",
+    "😂 Una hermana como tú no se consigue dos veces.",
+    "✨ Sigue siendo así de auténtica.",
+    "❤️ Feliz cumpleaños, hermana.",
+    "🎂 Hoy te toca celebrar, dormilona.",
+    "🌌 Que este nuevo año venga lleno de buenos momentos."
+];
+
+const message = document.getElementById("message");
+const messageText = document.getElementById("messageText");
+
+function crearEstrella(i){
+
+    const star = document.createElement("div");
+    star.className="star";
+
+    const angle = Math.random()*Math.PI*2;
+    const radius = 8 + Math.random()*43;
+
+    const x = 50 + Math.cos(angle)*radius;
+    const y = 50 + Math.sin(angle)*radius*0.55;
+
+    star.style.left=x+"%";
+    star.style.top=y+"%";
+
+    star.style.animationDelay=(Math.random()*2)+"s";
+
+    star.addEventListener("click",(e)=>{
+        e.stopPropagation();
+
+        messageText.textContent =
+            mensajes[i % mensajes.length];
+
+        message.classList.add("show");
+
+        setTimeout(()=>{
+            message.classList.remove("show");
+        },4000);
+    });
+
+    space.appendChild(star);
+}
+
+/* Crear muchas estrellas */
+for(let i=0;i<65;i++){
+    crearEstrella(i);
+}
+
+
+/* =========================
+   PARTÍCULAS
+========================= */
+
+for(let i=0;i<120;i++){
+
+    const p=document.createElement("div");
+    p.className="particle";
+
+    p.style.left=Math.random()*100+"%";
+    p.style.top=Math.random()*100+"%";
+
+    p.style.setProperty(
+        "--x",
+        ((Math.random()-.5)*300)+"px"
+    );
+
+    p.style.setProperty(
+        "--y",
+        ((Math.random()-.5)*300)+"px"
+    );
+
+    p.style.animationDuration=
+        (4+Math.random()*8)+"s";
+
+    p.style.animationDelay=
+        (-Math.random()*8)+"s";
+
+    space.appendChild(p);
+}
+
+</script>
+
+</body>
+    </html>
