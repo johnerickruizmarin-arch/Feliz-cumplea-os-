@@ -3,406 +3,655 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CR7 | SIUUU GALAXY</title>
+<title>CR7 — SIUUU GALAXY</title>
 
 <style>
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+}
+
+html {
+    background: #03030d;
 }
 
 body {
-    overflow: hidden;
-    background: #03000d;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #03030d;
     color: white;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
     touch-action: manipulation;
 }
 
-canvas {
+#universe {
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
+    z-index: 0;
+    pointer-events: none;
 }
 
-#intro {
-    position: absolute;
-    inset: 0;
+.nebula {
+    position: fixed;
+    inset: -30%;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 20% 30%,
+        rgba(95, 30, 255, .25), transparent 35%),
+      radial-gradient(ellipse at 80% 60%,
+        rgba(0, 170, 255, .16), transparent 35%),
+      radial-gradient(ellipse at 50% 90%,
+        rgba(255, 30, 90, .14), transparent 30%);
+    filter: blur(24px);
+    animation: nebulaMove 18s ease-in-out infinite alternate;
+}
+
+@keyframes nebulaMove {
+    from { transform: rotate(0deg) scale(1); }
+    to { transform: rotate(12deg) scale(1.18); }
+}
+
+.page {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    text-align: center;
-    z-index: 2;
-    padding: 20px;
-    pointer-events: none;
-    transition: opacity 0.5s;
+    padding: 28px 15px 35px;
 }
 
-#intro h1 {
-    font-size: clamp(35px, 9vw, 65px);
-    color: #ffe9a0;
-    text-shadow: 0 0 15px #ff8c00, 0 0 35px #ff00ff;
-}
-
-#intro p {
-    margin-top: 18px;
-    font-size: 17px;
-    color: #d8d5ff;
-}
-
-#tap {
-    margin-top: 28px;
-    padding: 15px 25px;
-    border: 1px solid #bca7ff;
+.badge {
+    border: 1px solid rgba(255,255,255,.22);
+    background: rgba(12, 12, 35, .62);
     border-radius: 40px;
-    background: #4c168b66;
-    color: white;
-    box-shadow: 0 0 25px #853cff;
-    animation: pulse 1.5s infinite;
+    padding: 9px 17px;
+    color: #d8d8ff;
+    font-size: 11px;
+    letter-spacing: 4px;
+    box-shadow: 0 0 25px rgba(102, 65, 255, .2);
+    backdrop-filter: blur(10px);
 }
 
-#reveal {
+h1 {
+    margin-top: 23px;
+    font-size: clamp(27px, 7vw, 48px);
+    font-weight: 1000;
+    letter-spacing: 3px;
+    line-height: 1.1;
+    background: linear-gradient(
+        90deg, #fff, #a9baff, #fff, #ffdf9c
+    );
+    background-size: 300% auto;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: titleShine 5s linear infinite;
+    text-shadow: 0 0 35px rgba(128, 117, 255, .15);
+}
+
+@keyframes titleShine {
+    to { background-position: 300% center; }
+}
+
+.subtitle {
+    margin-top: 12px;
+    color: #a9b0d8;
+    font-size: 12px;
+    letter-spacing: 3px;
+}
+
+.scene {
+    width: min(92vw, 430px);
+    height: 390px;
+    position: relative;
+    margin-top: 18px;
+    display: grid;
+    place-items: center;
+    perspective: 1000px;
+}
+
+.orbit {
     position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    pointer-events: none;
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(135, 153, 255, .22);
+    border-radius: 50%;
+    box-shadow:
+        0 0 20px rgba(94, 79, 255, .08),
+        inset 0 0 20px rgba(94, 79, 255, .08);
+    animation: orbitSpin 18s linear infinite;
 }
 
-#player {
-    width: min(70vw, 310px);
-    height: min(48vh, 350px);
-    filter: drop-shadow(0 0 25px #ff9d00);
-    animation: entrance 1s cubic-bezier(.2,1.8,.4,1) both;
+.orbit.two {
+    width: 350px;
+    height: 170px;
+    border-color: rgba(255, 195, 125, .3);
+    transform: rotate(-28deg);
+    animation-duration: 12s;
+    animation-direction: reverse;
+}
+
+.orbit.three {
+    width: 260px;
+    height: 360px;
+    border-color: rgba(80, 201, 255, .18);
+    animation-duration: 25s;
+}
+
+@keyframes orbitSpin {
+    from { rotate: 0deg; }
+    to { rotate: 360deg; }
+}
+
+.planet {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    top: 55px;
+    right: 42px;
+    background: radial-gradient(
+        circle at 30% 25%,
+        #fff4cf, #f7a85b 35%, #7438a8 75%, #211344
+    );
+    box-shadow: 0 0 25px rgba(255, 166, 96, .55);
+    animation: planetFloat 5s ease-in-out infinite;
+}
+
+.planet::after {
+    content: "";
+    position: absolute;
+    width: 70px;
+    height: 15px;
+    border: 3px solid rgba(255, 212, 150, .7);
+    border-radius: 50%;
+    top: 14px;
+    left: -15px;
+    transform: rotate(-25deg);
+}
+
+@keyframes planetFloat {
+    50% { transform: translateY(-13px); }
+}
+
+.photo-wrap {
+    position: relative;
+    width: 235px;
+    height: 290px;
+    display: grid;
+    place-items: center;
+    animation: heroFloat 4s ease-in-out infinite;
+    transform-style: preserve-3d;
+    transition: filter .3s;
+}
+
+.photo-wrap::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(94, 81, 255, .28);
+    filter: blur(45px);
+}
+
+.photo-wrap img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 18px;
+    filter:
+        drop-shadow(0 0 12px rgba(111, 127, 255, .45))
+        drop-shadow(0 0 35px rgba(109, 52, 255, .25));
+    -webkit-mask-image: linear-gradient(
+        to bottom, black 0%, black 78%, transparent 100%
+    );
+    mask-image: linear-gradient(
+        to bottom, black 0%, black 78%, transparent 100%
+    );
+}
+
+@keyframes heroFloat {
+    0%, 100% { transform: translateY(0) rotateY(-3deg); }
+    50% { transform: translateY(-12px) rotateY(3deg); }
+}
+
+.photo-label {
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: #e9eaff;
+    text-shadow: 0 0 15px #7e72ff;
+    white-space: nowrap;
 }
 
 #siuuu {
-    font-size: clamp(42px, 12vw, 85px);
-    font-weight: 1000;
+    position: relative;
+    z-index: 3;
+    margin-top: -2px;
+    font-size: clamp(47px, 12vw, 82px);
     font-style: italic;
-    color: #fff4a1;
-    text-shadow: 0 0 12px #ff8c00,
-                 0 0 30px #ff3c00,
-                 0 0 60px #ff00d9;
-    animation: siuuu 0.7s infinite alternate;
+    font-weight: 1000;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: #fff;
+    opacity: .92;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 15px #a99cff,
+        0 0 35px #7850ff,
+        0 0 70px #5232ff;
+    transition: transform .2s;
 }
 
-#subtitle {
-    margin-top: 10px;
-    letter-spacing: 5px;
-    font-size: 15px;
-    color: #ffffff;
-    text-shadow: 0 0 15px #9b68ff;
+#siuuu.pop {
+    animation: siuPop 1.5s cubic-bezier(.2,.8,.2,1);
 }
 
-#again {
-    position: absolute;
-    bottom: 25px;
-    z-index: 5;
-    padding: 12px 20px;
+@keyframes siuPop {
+    0% { transform: scale(.2) rotate(-12deg); opacity: 0; }
+    35% { transform: scale(1.2) rotate(3deg); opacity: 1; }
+    55% { transform: scale(.94); }
+    75% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.info {
+    margin-top: 13px;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: #a8aed4;
+}
+
+.button {
+    margin-top: 27px;
+    padding: 16px 27px;
+    border: 1px solid rgba(255,255,255,.55);
+    border-radius: 50px;
+    background: linear-gradient(110deg, #6b48ff, #315dff, #a144ff);
     color: white;
-    border: 1px solid #a78bfa;
-    background: #251044cc;
-    border-radius: 30px;
-    display: none;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    box-shadow:
+        0 0 20px rgba(104, 74, 255, .45),
+        inset 0 0 12px rgba(255,255,255,.12);
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    animation: buttonGlow 3s ease-in-out infinite;
 }
 
-@keyframes pulse {
-    50% { transform: scale(1.08); box-shadow: 0 0 40px #c000ff; }
+.button:active {
+    transform: scale(.94);
 }
 
-@keyframes entrance {
-    from { transform: scale(0) rotate(-25deg); opacity: 0; }
-    to { transform: scale(1) rotate(0); opacity: 1; }
+@keyframes buttonGlow {
+    50% {
+        box-shadow: 0 0 35px rgba(104, 74, 255, .8);
+    }
 }
 
-@keyframes siuuu {
-    from { transform: scale(1); }
-    to { transform: scale(1.09); }
+.hint {
+    margin-top: 17px;
+    font-size: 11px;
+    color: #9299c5;
+    line-height: 1.8;
+}
+
+.footer {
+    margin-top: 28px;
+    color: rgba(208, 212, 255, .48);
+    font-size: 9px;
+    letter-spacing: 4px;
+}
+
+.flash {
+    position: fixed;
+    inset: 0;
+    z-index: 8;
+    background: white;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.flash.go {
+    animation: flashEffect .6s ease-out;
+}
+
+@keyframes flashEffect {
+    0% { opacity: 0; }
+    12% { opacity: .85; }
+    100% { opacity: 0; }
+}
+
+.shockwave {
+    position: fixed;
+    z-index: 5;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 25px #8f7cff;
+    animation: wave 1s ease-out forwards;
+}
+
+@keyframes wave {
+    to {
+        width: 330px;
+        height: 330px;
+        opacity: 0;
+        margin-left: -157px;
+        margin-top: -157px;
+    }
+}
+
+.particle {
+    position: fixed;
+    z-index: 9;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: #fff;
+    box-shadow: 0 0 9px 2px #8c82ff;
+    animation: particleFly var(--duration, 1.2s) ease-out forwards;
+}
+
+@keyframes particleFly {
+    to {
+        transform:
+            translate(var(--dx), var(--dy))
+            scale(0);
+        opacity: 0;
+    }
+}
+
+@media (max-height: 700px) {
+    .page { padding-top: 18px; }
+    .scene { height: 320px; }
+    .photo-wrap { transform: scale(.85); }
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="space"></canvas>
+<div class="nebula"></div>
+<canvas id="universe"></canvas>
+<div class="flash" id="flash"></div>
 
-<div id="intro">
+<main class="page">
+
+    <div class="badge">THE GOAT EXPERIENCE</div>
+
     <h1>CR7 GALAXY</h1>
-    <p>El universo del mejor ⚽🐐</p>
-    <div id="tap">👆 TOCA LA PANTALLA</div>
-</div>
 
-<div id="reveal">
+    <p class="subtitle">ONE LEGEND · ONE CELEBRATION</p>
 
-    <!-- Futbolista estilizado con el número 7 -->
-    <svg id="player" viewBox="0 0 300 350"
-         xmlns="http://www.w3.org/2000/svg">
+    <section class="scene" id="scene">
 
-        <defs>
-            <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ff334f"/>
-                <stop offset="50%" stop-color="#a90025"/>
-                <stop offset="100%" stop-color="#420019"/>
-            </linearGradient>
+        <div class="orbit"></div>
+        <div class="orbit two"></div>
+        <div class="orbit three"></div>
 
-            <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
-                <stop stop-color="#ffd2a1"/>
-                <stop offset="100%" stop-color="#a95d38"/>
-            </linearGradient>
-        </defs>
+        <div class="planet"></div>
 
-        <!-- Piernas en pose de celebración -->
-        <path d="M105 235 L92 315 L65 335 L78 345
-                 L119 330 L143 246 Z" fill="#e9e9f5"/>
+        <div class="photo-wrap" id="hero">
+            <img
+                id="ronaldo"
+                src="https://commons.wikimedia.org/wiki/Special:FilePath/C%C3%A9l%C3%A9bration_de_C.Ronaldo.jpg"
+                alt="Cristiano Ronaldo celebrando un gol"
+            >
+            <div class="photo-label">CRISTIANO RONALDO</div>
+        </div>
 
-        <path d="M180 235 L206 300 L240 315 L230 330
-                 L185 322 L150 250 Z" fill="#d9d9e8"/>
-
-        <!-- Botas -->
-        <path d="M65 329 L43 337 L41 348 L85 348 L86 337 Z"
-              fill="#11111d"/>
-        <path d="M228 314 L247 315 L263 328 L254 336
-                 L222 330 Z" fill="#11111d"/>
-
-        <!-- Cuerpo -->
-        <path d="M108 108 L76 125 L91 202 L103 250
-                 Q150 272 199 250 L211 180 L225 126
-                 L190 108 Z" fill="url(#shirt)"/>
-
-        <!-- Brazos levantados -->
-        <path d="M84 126 L60 89 L38 47 L24 53
-                 L42 108 L65 153 Z" fill="url(#skin)"/>
-
-        <path d="M209 126 L235 88 L258 47 L272 53
-                 L254 108 L229 153 Z" fill="url(#skin)"/>
-
-        <!-- Mangas -->
-        <path d="M82 119 L65 132 L78 159 L100 145 Z"
-              fill="#d51b3d"/>
-        <path d="M210 119 L229 132 L218 159 L194 145 Z"
-              fill="#d51b3d"/>
-
-        <!-- Cuello -->
-        <rect x="132" y="88" width="36" height="32"
-              rx="10" fill="url(#skin)"/>
-
-        <!-- Cabeza -->
-        <path d="M112 39 Q113 8 150 8 Q187 8 188 43
-                 L180 82 Q169 103 150 103
-                 Q128 100 119 80 Z"
-              fill="url(#skin)"/>
-
-        <!-- Pelo -->
-        <path d="M111 48 Q99 8 145 2 Q185 -1 190 35
-                 L184 49 L175 29 L143 25 L120 37 L118 55 Z"
-              fill="#17121a"/>
-
-        <!-- Rasgos simplificados -->
-        <path d="M126 52 L142 52 M159 52 L175 52"
-              stroke="#34201c" stroke-width="4"
-              stroke-linecap="round"/>
-
-        <path d="M139 75 Q151 83 164 74"
-              stroke="#6d2525" stroke-width="4"
-              fill="none" stroke-linecap="round"/>
-
-        <!-- Número 7 -->
-        <text x="150" y="193" text-anchor="middle"
-              font-family="Arial" font-size="65"
-              font-weight="900" fill="#fff5df"
-              stroke="#ffd2a1" stroke-width="1">7</text>
-
-        <text x="150" y="217" text-anchor="middle"
-              font-family="Arial" font-size="13"
-              font-weight="bold" fill="#fff5df"
-              letter-spacing="3">CR7</text>
-    </svg>
+    </section>
 
     <div id="siuuu">SIUUUU!</div>
-    <div id="subtitle">RONALDO · THE GOAT</div>
-</div>
 
-<button id="again">🌌 VOLVER A EMPEZAR</button>
+    <p class="info">PORTUGAL · NUMBER 7 · LEGEND</p>
+
+    <button class="button" id="celebrate">
+        ⚡ ACTIVAR CELEBRACIÓN
+    </button>
+
+    <p class="hint">
+        Toca la pantalla y desata el poder del GOAT.<br>
+        Cada toque crea una explosión galáctica. ✦
+    </p>
+
+    <footer class="footer">
+        RONALDO · THE GOAT
+    </footer>
+
+</main>
 
 <script>
-const canvas = document.getElementById("space");
+const canvas = document.getElementById("universe");
 const ctx = canvas.getContext("2d");
 
-let w, h, stars = [], particles = [];
-let activated = false;
-let galaxyAngle = 0;
+let W, H, stars = [];
+let shootingStars = [];
+let lastTime = 0;
 
 function resize() {
-    w = canvas.width = innerWidth * devicePixelRatio;
-    h = canvas.height = innerHeight * devicePixelRatio;
-    canvas.style.width = innerWidth + "px";
-    canvas.style.height = innerHeight + "px";
-    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
 
-    stars = Array.from({length: 230}, () => ({
-        x: Math.random() * innerWidth,
-        y: Math.random() * innerHeight,
-        r: Math.random() * 1.8 + 0.3,
-        a: Math.random() * Math.PI * 2,
-        speed: Math.random() * 0.025 + 0.005
-    }));
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    stars = Array.from({length: Math.min(240, Math.floor(W * H / 3000))},
+        () => ({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            r: Math.random() * 1.7 + .2,
+            a: Math.random(),
+            speed: Math.random() * 1.5 + .2,
+            phase: Math.random() * 6.28
+        })
+    );
 }
 
-function drawGalaxy() {
-    const W = innerWidth;
-    const H = innerHeight;
-    const cx = W / 2;
-    const cy = H / 2;
+window.addEventListener("resize", resize);
+resize();
+
+function draw(time = 0) {
+    const dt = Math.min((time - lastTime) / 16.67 || 1, 2);
+    lastTime = time;
 
     ctx.clearRect(0, 0, W, H);
 
-    const bg = ctx.createRadialGradient(
-        cx, cy, 0, cx, cy, Math.max(W, H) * 0.8
-    );
-
-    bg.addColorStop(0, "#170b3b");
-    bg.addColorStop(0.45, "#080b25");
-    bg.addColorStop(1, "#02010a");
-
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
-    // Brazos giratorios de la galaxia
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(galaxyAngle);
-
-    for (let arm = 0; arm < 4; arm++) {
-        for (let i = 0; i < 110; i++) {
-            const t = i / 110;
-            const angle = t * 5.5 + arm * Math.PI / 2;
-            const radius = t * Math.min(W, H) * 0.47;
-
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius * 0.68;
-
-            ctx.beginPath();
-            ctx.arc(x, y, Math.random() * 1.5 + 0.4, 0, Math.PI * 2);
-            ctx.fillStyle = arm % 2
-                ? "rgba(172,115,255,0.7)"
-                : "rgba(255,160,220,0.65)";
-            ctx.fill();
-        }
-    }
-
-    ctx.restore();
-    galaxyAngle += 0.0015;
-
-    // Estrellas que titilan
     for (const s of stars) {
-        s.a += s.speed;
+        s.phase += .012 * dt;
 
-        const brightness = 0.45 + Math.sin(s.a) * 0.45;
-
-        ctx.globalAlpha = brightness;
-        ctx.fillStyle = "#ffffff";
-        ctx.shadowBlur = 7;
-        ctx.shadowColor = "#a9caff";
+        const alpha = .25 + (Math.sin(s.phase) + 1) * .35;
 
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(225,230,255,${alpha})`;
         ctx.fill();
+
+        if (s.r > 1.35) {
+            ctx.strokeStyle = `rgba(160,180,255,${alpha * .6})`;
+            ctx.lineWidth = .5;
+            ctx.beginPath();
+            ctx.moveTo(s.x - 4, s.y);
+            ctx.lineTo(s.x + 4, s.y);
+            ctx.moveTo(s.x, s.y - 4);
+            ctx.lineTo(s.x, s.y + 4);
+            ctx.stroke();
+        }
     }
 
-    ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
+    shootingStars = shootingStars.filter(s => s.life > 0);
 
-    // Partículas de energía
-    for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.985;
-        p.vy *= 0.985;
-        p.life--;
-
-        ctx.globalAlpha = Math.max(0, p.life / 90);
-        ctx.fillStyle = p.color;
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = p.color;
-
+    for (const s of shootingStars) {
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - s.vx * 8, s.y - s.vy * 8);
+        ctx.strokeStyle = `rgba(210,225,255,${s.life})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        if (p.life <= 0) particles.splice(i, 1);
+        s.x += s.vx * dt;
+        s.y += s.vy * dt;
+        s.life -= .018 * dt;
     }
 
-    ctx.globalAlpha = 1;
-    ctx.shadowBlur = 0;
-
-    requestAnimationFrame(drawGalaxy);
-}
-
-function explosion(x, y) {
-    const colors = ["#ffffff", "#ffe66d", "#ff8a00", "#b56cff", "#ff49b6"];
-
-    for (let i = 0; i < 190; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 8 + 1;
-
-        particles.push({
-            x, y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            size: Math.random() * 3 + 1,
-            life: Math.random() * 70 + 25,
-            color: colors[Math.floor(Math.random() * colors.length)]
+    if (Math.random() < .012) {
+        shootingStars.push({
+            x: Math.random() * W,
+            y: Math.random() * H * .55,
+            vx: 7 + Math.random() * 5,
+            vy: 3 + Math.random() * 4,
+            life: 1
         });
     }
+
+    requestAnimationFrame(draw);
 }
 
-function reveal(x, y) {
-    if (activated) {
-        explosion(x, y);
-        return;
+requestAnimationFrame(draw);
+
+const hero = document.getElementById("hero");
+const siuuu = document.getElementById("siuuu");
+const flash = document.getElementById("flash");
+const button = document.getElementById("celebrate");
+
+let lastCelebration = 0;
+
+function particleBurst(x, y, amount = 85) {
+    for (let i = 0; i < amount; i++) {
+        const p = document.createElement("span");
+        p.className = "particle";
+
+        p.style.left = x + "px";
+        p.style.top = y + "px";
+
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 45 + Math.random() * 230;
+
+        p.style.setProperty("--dx",
+            Math.cos(angle) * distance + "px");
+        p.style.setProperty("--dy",
+            Math.sin(angle) * distance + "px");
+        p.style.setProperty("--duration",
+            (.65 + Math.random() * 1.15) + "s");
+
+        const size = 2 + Math.random() * 5;
+        p.style.width = size + "px";
+        p.style.height = size + "px";
+
+        const colors = [
+            "#ffffff", "#b6a5ff", "#6beaff",
+            "#ffd98a", "#ff7db7"
+        ];
+
+        p.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1900);
     }
+}
 
-    activated = true;
+function shockwave(x, y) {
+    const wave = document.createElement("div");
+    wave.className = "shockwave";
 
-    document.getElementById("intro").style.opacity = "0";
+    wave.style.left = x + "px";
+    wave.style.top = y + "px";
+    wave.style.marginLeft = "-7px";
+    wave.style.marginTop = "-7px";
+
+    document.body.appendChild(wave);
+    setTimeout(() => wave.remove(), 1100);
+}
+
+function celebrate(x, y) {
+    const now = Date.now();
+
+    if (now - lastCelebration < 550) return;
+    lastCelebration = now;
+
+    const rect = hero.getBoundingClientRect();
+    const cx = x ?? rect.left + rect.width / 2;
+    const cy = y ?? rect.top + rect.height / 2;
+
+    particleBurst(cx, cy, 100);
+    shockwave(cx, cy);
+
+    flash.classList.remove("go");
+    void flash.offsetWidth;
+    flash.classList.add("go");
+
+    hero.animate([
+        {
+            transform: "translateY(0) scale(1) rotate(0deg)"
+        },
+        {
+            transform: "translateY(-75px) scale(1.12) rotate(-5deg)",
+            offset: .3
+        },
+        {
+            transform: "translateY(-100px) scale(1.15) rotate(4deg)",
+            offset: .48
+        },
+        {
+            transform: "translateY(0) scale(1.04) rotate(0deg)",
+            offset: .75
+        },
+        {
+            transform: "translateY(0) scale(1) rotate(0deg)"
+        }
+    ], {
+        duration: 1000,
+        easing: "cubic-bezier(.2,.8,.3,1)"
+    });
+
+    siuuu.classList.remove("pop");
+    void siuuu.offsetWidth;
+    siuuu.classList.add("pop");
 
     setTimeout(() => {
-        document.getElementById("intro").style.display = "none";
-        document.getElementById("reveal").style.display = "flex";
-        document.getElementById("again").style.display = "block";
-    }, 350);
+        const r = siuuu.getBoundingClientRect();
+        particleBurst(r.left + r.width / 2,
+                      r.top + r.height / 2, 55);
+    }, 430);
 
-    explosion(x, y);
+    if (navigator.vibrate) {
+        navigator.vibrate([60, 35, 100]);
+    }
 }
 
-document.addEventListener("pointerdown", e => {
-    if (e.target.id === "again") return;
-    reveal(e.clientX, e.clientY);
+button.addEventListener("click", event => {
+    event.stopPropagation();
+    celebrate();
 });
 
-document.getElementById("again").addEventListener("click", () => {
-    activated = false;
-    document.getElementById("reveal").style.display = "none";
-    document.getElementById("again").style.display = "none";
-    document.getElementById("intro").style.display = "flex";
-    document.getElementById("intro").style.opacity = "1";
-    particles = [];
+document.addEventListener("pointerdown", event => {
+    if (event.target.closest("button")) return;
+    celebrate(event.clientX, event.clientY);
 });
-
-addEventListener("resize", resize);
-
-resize();
-drawGalaxy();
 </script>
 
 </body>
